@@ -14,6 +14,13 @@
 		67DEF9132F599D0500A728DD /* SnapCalTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67DEF9122F599D0500A728DD /* SnapCalTests.swift */; };
 		67DEF91D2F599D0500A728DD /* SnapCalUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67DEF91C2F599D0500A728DD /* SnapCalUITests.swift */; };
 		67DEF91F2F599D0500A728DD /* SnapCalUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67DEF91E2F599D0500A728DD /* SnapCalUITestsLaunchTests.swift */; };
+		67F7A1002F6832A00087FFB9 /* DetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67F7A0FF2F6832A00087FFB9 /* DetailView.swift */; };
+		67F7A1022F6832B10087FFB9 /* DashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67F7A1012F6832B10087FFB9 /* DashboardView.swift */; };
+		67F7A1042F6832BC0087FFB9 /* ImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67F7A1032F6832BB0087FFB9 /* ImagePicker.swift */; };
+		67F7A1082F6832CD0087FFB9 /* LogView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67F7A1072F6832CD0087FFB9 /* LogView.swift */; };
+		67F7A10A2F6832D30087FFB9 /* MyProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67F7A1092F6832D30087FFB9 /* MyProgressView.swift */; };
+		67F7A10C2F6833230087FFB9 /* ScannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67F7A10B2F6833220087FFB9 /* ScannerView.swift */; };
+		67F7A10E2F68332E0087FFB9 /* TextRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67F7A10D2F68332E0087FFB9 /* TextRecognizer.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -44,6 +51,13 @@
 		67DEF9182F599D0500A728DD /* SnapCalUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SnapCalUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		67DEF91C2F599D0500A728DD /* SnapCalUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnapCalUITests.swift; sourceTree = "<group>"; };
 		67DEF91E2F599D0500A728DD /* SnapCalUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnapCalUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		67F7A0FF2F6832A00087FFB9 /* DetailView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailView.swift; sourceTree = "<group>"; };
+		67F7A1012F6832B10087FFB9 /* DashboardView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DashboardView.swift; sourceTree = "<group>"; };
+		67F7A1032F6832BB0087FFB9 /* ImagePicker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImagePicker.swift; sourceTree = "<group>"; };
+		67F7A1072F6832CD0087FFB9 /* LogView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LogView.swift; sourceTree = "<group>"; };
+		67F7A1092F6832D30087FFB9 /* MyProgressView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MyProgressView.swift; sourceTree = "<group>"; };
+		67F7A10B2F6833220087FFB9 /* ScannerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScannerView.swift; sourceTree = "<group>"; };
+		67F7A10D2F68332E0087FFB9 /* TextRecognizer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TextRecognizer.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -95,6 +109,13 @@
 			isa = PBXGroup;
 			children = (
 				67DEF9012F599D0100A728DD /* SnapCalApp.swift */,
+				67F7A0FF2F6832A00087FFB9 /* DetailView.swift */,
+				67F7A1032F6832BB0087FFB9 /* ImagePicker.swift */,
+				67F7A1072F6832CD0087FFB9 /* LogView.swift */,
+				67F7A1092F6832D30087FFB9 /* MyProgressView.swift */,
+				67F7A1012F6832B10087FFB9 /* DashboardView.swift */,
+				67F7A10D2F68332E0087FFB9 /* TextRecognizer.swift */,
+				67F7A10B2F6833220087FFB9 /* ScannerView.swift */,
 				67DEF9032F599D0100A728DD /* ContentView.swift */,
 				67DEF9052F599D0400A728DD /* Assets.xcassets */,
 				67DEF9072F599D0400A728DD /* Preview Content */,
@@ -258,6 +279,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				67DEF9042F599D0100A728DD /* ContentView.swift in Sources */,
+				67F7A10C2F6833230087FFB9 /* ScannerView.swift in Sources */,
+				67F7A10A2F6832D30087FFB9 /* MyProgressView.swift in Sources */,
+				67F7A1082F6832CD0087FFB9 /* LogView.swift in Sources */,
+				67F7A1022F6832B10087FFB9 /* DashboardView.swift in Sources */,
+				67F7A1042F6832BC0087FFB9 /* ImagePicker.swift in Sources */,
+				67F7A1002F6832A00087FFB9 /* DetailView.swift in Sources */,
+				67F7A10E2F68332E0087FFB9 /* TextRecognizer.swift in Sources */,
 				67DEF9022F599D0100A728DD /* SnapCalApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -425,6 +453,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -454,6 +483,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
