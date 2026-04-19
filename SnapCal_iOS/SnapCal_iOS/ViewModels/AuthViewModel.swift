@@ -1,7 +1,11 @@
-//
-//  AuthViewModel.swift
-//  SnapCal_iOS
-//
-//  Created by user294604 on 3/13/26.
-//
+import Foundation
+import Combine
 
+@MainActor
+final class AuthViewModel: ObservableObject {
+    @Published var email = ""
+    @Published var password = ""
+    @Published var confirmPassword = ""
+    @Published var displayName = ""
+    @Published var errorMessage = ""
+}

@@ -10,23 +10,9 @@
 		B5C6DC382F64A8F600581C0D /* SnapCal_iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SnapCal_iOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
-/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		B5C6DC4B2F64A9B400581C0D /* Exceptions for "SnapCal_iOS" folder in "SnapCal_iOS" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				Components/MealRow.swift,
-				Repositories/AuthRepository.swift,
-			);
-			target = B5C6DC372F64A8F600581C0D /* SnapCal_iOS */;
-		};
-/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
-
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		B5C6DC3A2F64A8F600581C0D /* SnapCal_iOS */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				B5C6DC4B2F64A9B400581C0D /* Exceptions for "SnapCal_iOS" folder in "SnapCal_iOS" target */,
-			);
 			path = SnapCal_iOS;
 			sourceTree = "<group>";
 		};

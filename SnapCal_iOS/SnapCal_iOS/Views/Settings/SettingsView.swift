@@ -1,42 +1,32 @@
 import SwiftUI
+import SwiftData
 
 struct SettingsView: View {
+    @EnvironmentObject private var session: AppSession
+    @Query(sort: \Meal.createdAt, order: .reverse) private var meals: [Meal]
 
     @State private var garminConnected = true
 
+    @State private var todaySteps = 0
+    @State private var todayActiveCalories = 0
+    @State private var restingHeartRate = 0
+    @State private var averageWorkoutHeartRate = 0
+    @State private var latestWorkoutMaxHeartRate = 0
+
+    private let healthService = HealthService()
+
     var body: some View {
-
         ZStack {
-
             SnapCalTheme.background
                 .ignoresSafeArea()
 
             ScrollView {
-
                 VStack(alignment: .leading, spacing: 24) {
-
-                    Text("Garmin Integration")
+                    Text("Settings")
                         .font(.title2)
                         .fontWeight(.semibold)
 
-                    HStack {
-
-                        VStack(alignment: .leading) {
-
-                            Text("Connect to Garmin")
-                                .fontWeight(.semibold)
-
-                            Text("Sync workouts, steps, heart rate")
-                                .font(.caption)
-
-                        }
-
-                        Spacer()
-
-                        Toggle("", isOn: $garminConnected)
-                            .labelsHidden()
-
-                    }
+                    garminSection
 
                     Divider()
 
@@ -44,67 +34,105 @@ struct SettingsView: View {
 
                     Divider()
 
-                    workouts
+                    nutritionActivity
 
                     Divider()
 
-                    heartRate
-
+                    healthSummary
                 }
                 .padding(.horizontal, SnapCalTheme.screenHorizontalPadding)
-
+                .padding(.vertical, 20)
             }
+        }
+        .task {
+            await loadMockHealthData()
+        }
+    }
 
+    private var garminSection: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            Text("Garmin / Health")
+                .fontWeight(.semibold)
+
+            HStack {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Mock Garmin Connected")
+                        .fontWeight(.semibold)
+
+                    Text("This is demo health data for the iOS simulator.")
+                        .font(.caption)
+                        .foregroundStyle(SnapCalTheme.textSecondary)
+                }
+
+                Spacer()
+
+                Toggle("", isOn: $garminConnected)
+                    .labelsHidden()
+                    .tint(SnapCalTheme.primary)
+                    .disabled(true)
+            }
         }
     }
 
     private var account: some View {
-
         VStack(alignment: .leading, spacing: 8) {
-
             Text("Account")
                 .fontWeight(.semibold)
 
-            Text("Guest session")
+            Text(session.isGuest ? "Guest session" : session.userEmail)
                 .font(.caption)
+                .foregroundStyle(SnapCalTheme.textSecondary)
 
             Button("Sign out") {
-
+                session.signOut()
             }
-            .foregroundStyle(.blue)
-
+            .foregroundStyle(SnapCalTheme.primary)
         }
     }
 
-    private var workouts: some View {
-
+    private var nutritionActivity: some View {
         VStack(alignment: .leading, spacing: 8) {
-
-            Text("Recent Workouts")
+            Text("Nutrition Activity")
                 .fontWeight(.semibold)
 
-            Text("Sep 26 • Cycling 45 min • 520 kcal")
-            Text("Sep 25 • Running 30 min • 340 kcal")
-            Text("Sep 23 • Strength 40 min • 280 kcal")
-
+            Text("Logged meals: \(meals.count)")
+            Text("Meals today: \(meals.filter { Calendar.current.isDateInToday($0.createdAt) }.count)")
+            Text("Last logged meal: \(meals.first?.name ?? "None")")
+            Text("Mock active calories: \(todayActiveCalories) kcal")
+            Text("Mock steps: \(todaySteps)")
         }
     }
 
-    private var heartRate: some View {
-
+    private var healthSummary: some View {
         VStack(alignment: .leading, spacing: 6) {
-
-            Text("Heart Rate Summary")
+            Text("Health Summary")
                 .fontWeight(.semibold)
 
-            Text("Resting HR: 58 bpm")
-            Text("Average HR (workouts): 138 bpm")
-            Text("Max HR (last workout): 172 bpm")
+            Text("Resting HR: \(restingHeartRate)")
+            Text("Average HR (workouts): \(averageWorkoutHeartRate)")
+            Text("Max HR (last workout): \(latestWorkoutMaxHeartRate)")
+            Text("This section currently uses mock Garmin/Health data.")
+                .font(.caption)
+                .foregroundStyle(SnapCalTheme.textSecondary)
+                .padding(.top, 4)
+        }
+    }
 
+    private func loadMockHealthData() async {
+        let data = await healthService.fetchMockHealthData()
+
+        await MainActor.run {
+            todaySteps = data.todaySteps
+            todayActiveCalories = data.todayActiveCalories
+            restingHeartRate = data.restingHeartRate
+            averageWorkoutHeartRate = data.averageWorkoutHeartRate
+            latestWorkoutMaxHeartRate = data.latestWorkoutMaxHeartRate
         }
     }
 }
 
 #Preview {
     SettingsView()
+        .environmentObject(AppSession())
+        .modelContainer(for: Meal.self, inMemory: true)
 }

@@ -3,6 +3,19 @@ import SwiftData
 
 struct DashboardView: View {
     @EnvironmentObject private var session: AppSession
+    @Query(sort: \Meal.createdAt, order: .reverse) private var meals: [Meal]
+
+    @State private var selectedTab: SnapTab = .home
+    @State private var showManualMeal = false
+    @State private var showScanMeal = false
+    @State private var mealToEdit: Meal?
+
+    @State private var todaySteps = 0
+    @State private var calorieOut = 0
+
+    private let calorieGoal = 2300
+    private let stepGoal = 8000
+    private let healthService = HealthService()
 
     var body: some View {
         ZStack {
@@ -10,32 +23,68 @@ struct DashboardView: View {
                 .ignoresSafeArea()
 
             VStack(spacing: 0) {
-                ScrollView(showsIndicators: false) {
-                    VStack(alignment: .leading, spacing: 28) {
-                        headerSection
-                        caloriesSection
-                        statsSection
-                        quickActionsSection
-                        accountSection
-                    }
-                    .padding(.horizontal, SnapCalTheme.screenHorizontalPadding)
-                    .padding(.top, 36)
-                    .padding(.bottom, 24)
-                }
+                content
 
-                BottomTabBar(selected: .home) { tab in
-                    // stub 
-        
+                BottomTabBar(selected: selectedTab) { tab in
+                    selectedTab = tab
                 }
             }
         }
         .navigationBarBackButtonHidden(true)
+        .sheet(isPresented: $showManualMeal) {
+            ManualMealView()
+        }
+        .sheet(isPresented: $showScanMeal) {
+            ScanMealView()
+        }
+        .sheet(item: $mealToEdit) { meal in
+            EditMealSheet(meal: meal)
+        }
+        .task {
+            await loadMockHealthData()
+        }
+    }
+
+    @ViewBuilder
+    private var content: some View {
+        switch selectedTab {
+        case .home:
+            homeContent
+        case .log:
+            ManualMealView()
+        case .progress:
+            ProgressView()
+        case .settings:
+            SettingsView()
+        }
+    }
+
+    private var homeContent: some View {
+        ScrollView(showsIndicators: false) {
+            VStack(alignment: .leading, spacing: 28) {
+                headerSection
+                caloriesSection
+                statsSection
+                quickActionsSection
+                recentMealsSection
+                accountSection
+            }
+            .padding(.horizontal, SnapCalTheme.screenHorizontalPadding)
+            .padding(.top, 28)
+            .padding(.bottom, 24)
+        }
     }
 
     private var headerSection: some View {
-        Text("Dashboard")
-            .font(.system(size: 24, weight: .bold))
-            .foregroundStyle(SnapCalTheme.textPrimary)
+        VStack(alignment: .leading, spacing: 6) {
+            Text("Dashboard")
+                .font(.system(size: 24, weight: .bold))
+                .foregroundStyle(SnapCalTheme.textPrimary)
+
+            Text(session.isGuest ? "Welcome, Guest" : session.userEmail)
+                .font(.system(size: 15))
+                .foregroundStyle(SnapCalTheme.textSecondary)
+        }
     }
 
     private var caloriesSection: some View {
@@ -45,21 +94,21 @@ struct DashboardView: View {
                 .foregroundStyle(SnapCalTheme.textPrimary)
 
             HStack(alignment: .center, spacing: 18) {
-                RingChartView(progress: 0.72)
+                RingChartView(progress: calorieProgress)
                     .frame(width: 108, height: 108)
 
                 VStack(alignment: .leading, spacing: 8) {
                     HStack(spacing: 12) {
-                        Text("In: 1,650 kcal")
+                        Text("In: \(todayCalories) kcal")
                             .font(.system(size: 14))
                             .foregroundStyle(SnapCalTheme.textPrimary)
 
-                        Text("Out: 700 kcal")
+                        Text("Out: \(calorieOut) kcal")
                             .font(.system(size: 14))
                             .foregroundStyle(SnapCalTheme.textPrimary)
                     }
 
-                    Text("Balance: -950 kcal")
+                    Text("Balance: \(todayCalories - calorieOut) kcal")
                         .font(.system(size: 16, weight: .bold))
                         .foregroundStyle(SnapCalTheme.textPrimary)
 
@@ -76,17 +125,17 @@ struct DashboardView: View {
     }
 
     private var statsSection: some View {
-        HStack(alignment: .top, spacing: 28) {
+        HStack(alignment: .top, spacing: 16) {
             MacroCard(
                 title: "Steps",
-                value: "6,842",
-                subtitle: "Goal: 8,000"
+                value: "\(todaySteps)",
+                subtitle: "Goal: \(stepGoal)"
             )
 
             MacroCard(
-                title: "Workouts",
-                value: "Cycling 45 min",
-                subtitle: "Burned: 520 kcal"
+                title: "Meals",
+                value: "\(todaysMeals.count)",
+                subtitle: meals.first?.name ?? "No meals yet"
             )
         }
     }
@@ -98,9 +147,40 @@ struct DashboardView: View {
                 .foregroundStyle(SnapCalTheme.textPrimary)
 
             HStack(spacing: 12) {
-                quickActionFilled(title: "Scan\nLabel")
-                quickActionOutlined(title: "Log\nMeal")
-                quickActionOutlined(title: "Progres\ns")
+                quickActionFilled(title: "Scan\nLabel") {
+                    showScanMeal = true
+                }
+
+                quickActionOutlined(title: "Log\nMeal") {
+                    showManualMeal = true
+                }
+
+                quickActionOutlined(title: "Progres\ns") {
+                    selectedTab = .progress
+                }
+            }
+        }
+    }
+
+    private var recentMealsSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Recent Meals")
+                .font(.system(size: 15, weight: .semibold))
+                .foregroundStyle(SnapCalTheme.textPrimary)
+
+            if meals.isEmpty {
+                SnapCard {
+                    Text("No meals logged yet. Use Log Meal or Scan Label to get started.")
+                        .foregroundStyle(SnapCalTheme.textSecondary)
+                }
+            } else {
+                ForEach(Array(meals.prefix(3))) { meal in
+                    MealRow(meal: meal) {
+                        mealToEdit = meal
+                    } onDelete: {
+                        deleteMeal(meal)
+                    }
+                }
             }
         }
     }
@@ -125,6 +205,24 @@ struct DashboardView: View {
         }
     }
 
+    private var todaysMeals: [Meal] {
+        meals.filter { Calendar.current.isDateInToday($0.createdAt) }
+    }
+
+    private var todayCalories: Int {
+        todaysMeals.reduce(0) { $0 + $1.calories }
+    }
+
+    private var calorieProgress: Double {
+        min(max(Double(todayCalories) / Double(calorieGoal), 0), 1)
+    }
+
+    private func deleteMeal(_ meal: Meal) {
+        if let context = meal.modelContext {
+            context.delete(meal)
+        }
+    }
+
     private func legendItem(color: Color, text: String) -> some View {
         HStack(spacing: 6) {
             RoundedRectangle(cornerRadius: 2)
@@ -137,9 +235,8 @@ struct DashboardView: View {
         }
     }
 
-    private func quickActionFilled(title: String) -> some View {
-        Button {
-        } label: {
+    private func quickActionFilled(title: String, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
             Text(title)
                 .font(.system(size: 16, weight: .medium))
                 .multilineTextAlignment(.center)
@@ -151,9 +248,8 @@ struct DashboardView: View {
         }
     }
 
-    private func quickActionOutlined(title: String) -> some View {
-        Button {
-        } label: {
+    private func quickActionOutlined(title: String, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
             Text(title)
                 .font(.system(size: 16, weight: .medium))
                 .multilineTextAlignment(.center)
@@ -165,6 +261,16 @@ struct DashboardView: View {
                     Capsule()
                         .stroke(SnapCalTheme.border, lineWidth: 1)
                 )
+        }
+    }
+
+    private func loadMockHealthData() async {
+        let steps = await healthService.fetchTodaySteps()
+        let activeCalories = await healthService.fetchTodayActiveEnergy()
+
+        await MainActor.run {
+            todaySteps = steps
+            calorieOut = activeCalories
         }
     }
 }
@@ -196,5 +302,6 @@ private struct RingChartView: View {
                 session.signIn(email: "oleg@example.com", remember: true)
                 return session
             }())
+            .modelContainer(for: Meal.self, inMemory: true)
     }
 }

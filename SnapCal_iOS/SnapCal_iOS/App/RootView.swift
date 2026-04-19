@@ -2,17 +2,28 @@ import SwiftUI
 
 struct RootView: View {
     @EnvironmentObject private var session: AppSession
+    @State private var showSplash = true
 
     var body: some View {
-        NavigationStack {
-            if session.isLoggedIn {
-                DashboardView()
+        Group {
+            if showSplash {
+                SplashView {
+                    withAnimation(.easeInOut(duration: 0.25)) {
+                        showSplash = false
+                    }
+                }
             } else {
-                switch session.authScreen {
-                case .login:
-                    LoginView()
-                case .signUp:
-                    SignUpView()
+                NavigationStack {
+                    if session.isLoggedIn {
+                        DashboardView()
+                    } else {
+                        switch session.authScreen {
+                        case .login:
+                            LoginView()
+                        case .signUp:
+                            SignUpView()
+                        }
+                    }
                 }
             }
         }

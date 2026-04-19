@@ -1,53 +1,86 @@
 import SwiftUI
+import SwiftData
 
 struct EditMealSheet: View {
-
-    @Environment(\.dismiss) var dismiss
-
-    @State private var name = "Protein Shake"
-    @State private var portion = "30"
-    @State private var calories = "120"
-    @State private var protein = "24"
-    @State private var carbs = "3"
-    @State private var fat = "1"
+    @Environment(\.dismiss) private var dismiss
+    @Bindable var meal: Meal
 
     var body: some View {
-
         NavigationStack {
+            ScrollView {
+                VStack(spacing: 16) {
+                    SnapTextField(title: "Food name", text: $meal.name)
+                    SnapTextField(title: "Meal type", text: $meal.mealType)
+                    SnapTextField(title: "Portion size (g)", text: portionBinding)
+                    SnapTextField(title: "Calories", text: caloriesBinding)
 
-            VStack(spacing: 16) {
-
-                SnapTextField(title: "Food name", text: $name)
-                SnapTextField(title: "Portion size", text: $portion)
-                SnapTextField(title: "Calories", text: $calories)
-
-                HStack {
-                    SnapTextField(title: "Protein", text: $protein)
-                    SnapTextField(title: "Carbs", text: $carbs)
-                    SnapTextField(title: "Fat", text: $fat)
-                }
-
-                HStack(spacing: 12) {
-
-                    PrimaryButton(title: "Update") {
-
+                    HStack {
+                        SnapTextField(title: "Protein", text: proteinBinding)
+                        SnapTextField(title: "Carbs", text: carbsBinding)
+                        SnapTextField(title: "Fat", text: fatBinding)
                     }
 
-                    SecondaryButton(title: "Cancel") {
-                        dismiss()
+                    HStack(spacing: 12) {
+                        PrimaryButton(title: "Done") {
+                            dismiss()
+                        }
+
+                        SecondaryButton(title: "Cancel") {
+                            dismiss()
+                        }
                     }
-
                 }
-
-                Spacer()
-
+                .padding()
             }
-            .padding()
             .navigationTitle("Edit meal")
+            .navigationBarTitleDisplayMode(.inline)
         }
+    }
+
+    private var portionBinding: Binding<String> {
+        Binding(
+            get: { meal.portionGrams.map { format($0) } ?? "" },
+            set: { meal.portionGrams = Double($0.replacingOccurrences(of: ",", with: ".")) }
+        )
+    }
+
+    private var caloriesBinding: Binding<String> {
+        Binding(
+            get: { String(meal.calories) },
+            set: { meal.calories = Int($0) ?? 0 }
+        )
+    }
+
+    private var proteinBinding: Binding<String> {
+        Binding(
+            get: { format(meal.protein) },
+            set: { meal.protein = Double($0.replacingOccurrences(of: ",", with: ".")) ?? 0 }
+        )
+    }
+
+    private var carbsBinding: Binding<String> {
+        Binding(
+            get: { format(meal.carbs) },
+            set: { meal.carbs = Double($0.replacingOccurrences(of: ",", with: ".")) ?? 0 }
+        )
+    }
+
+    private var fatBinding: Binding<String> {
+        Binding(
+            get: { format(meal.fat) },
+            set: { meal.fat = Double($0.replacingOccurrences(of: ",", with: ".")) ?? 0 }
+        )
+    }
+
+    private func format(_ value: Double) -> String {
+        if value.rounded() == value {
+            return String(Int(value))
+        }
+        return String(format: "%.1f", value)
     }
 }
 
 #Preview {
-    EditMealSheet()
+    let meal = Meal(name: "Protein Shake", calories: 120, protein: 24, carbs: 3, fat: 1, mealType: "Snack")
+    return EditMealSheet(meal: meal)
 }
